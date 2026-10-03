@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iPhone Live Photo Effect</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #0d0d0d;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Container Live Photo */
+    .live-photo-container {
+      position: relative;
+      width: 360px;
+      height: 640px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Gambar diam */
+    .live-photo-img,
+    .live-photo-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: opacity 0.2s ease-in-out;
+    }
+
+    /* Video tersembunyi secara bawaan */
+    .live-photo-video {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Saat aktif (ditekan/hover), tampilkan video */
+    .live-photo-container.active .live-photo-video {
+      opacity: 1;
+    }
+
+    /* Badge LIVE ala iPhone */
+    .live-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 20px;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      z-index: 10;
+      transition: background 0.3s ease;
+    }
+
+    /* Ikon Concentric Circles ala iOS Live Photo */
+    .live-icon {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px dashed rgba(255, 255, 255, 0.8);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .live-icon::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background-color: #fff;
+      border-radius: 50%;
+    }
+
+    /* Animasi putar pada badge saat video diputar */
+    .live-photo-container.active .live-icon {
+      animation: spin 3s linear infinite;
+      border-style: solid;
+      border-color: #f5c518;
+    }
+
+    .live-photo-container.active .live-icon::after {
+      background-color: #f5c518;
+    }
+
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="live-photo-container" id="livePhoto">
+    <!-- Badge LIVE -->
+    <div class="live-badge">
+      <div class="live-icon"></div>
+      <span>LIVE</span>
+    </div>
+
+    <!-- Foto Utama (Ganti src dengan link foto Anda) -->
+    <img class="live-photo-img" src="https://picsum.photos/id/1025/720/1280" alt="Live Photo Static">
+
+    <!-- Video Gerakan (Ganti src dengan link video Anda) -->
+    <video class="live-photo-video" id="liveVideo" loop muted playsinline>
+      <source src="https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-lighting-1230-large.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <script>
+    const container = document.getElementById('livePhoto');
+    const video = document.getElementById('liveVideo');
+
+    // Fungsi untuk memulai Live Photo
+    function startLive() {
+      container.classList.add('active');
+      video.currentTime = 0;
+      video.play();
+    }
+
+    // Fungsi untuk menghentikan Live Photo
+    function stopLive() {
+      container.classList.remove('active');
+      video.pause();
+    }
+
+    // Event Listener untuk Komputer (Klik & Tahan / Mouse)
+    container.addEventListener('mousedown', startLive);
+    container.addEventListener('mouseup', stopLive);
+    container.addEventListener('mouseleave', stopLive);
+
+    // Event Listener untuk HP / Touchscreen (Sentuh & Tahan)
+    container.addEventListener('touchstart', (e) => {
+      e.preventDefault(); // Mencegah scroll saat menahan foto
+      startLive();
+    });
+    container.addEventListener('touchend', stopLive);
+    container.addEventListener('touchcancel', stopLive);
+  </script>
+
+</body>
+</html>
